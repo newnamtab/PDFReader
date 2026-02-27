@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="PDFReader/PDFReader.csproj" />
+  <Project Path="PDFUrlExaminer.Tests/PDFUrlExaminer.Tests.csproj" Id="95623e87-3de7-4cff-885a-add206b42686" />
+  <Project Path="PDFUrlExaminer/PDFUrlExaminer.csproj" Id="90ec5249-fcfc-45f5-aa9b-8862b22cd77a" />
+  <Project Path="URLProvider.Tests/URLProvider.Tests.csproj" />
+  <Project Path="URLProvider/URLProvider.csproj" />
+  <Project Path="URLReader.Tests/URLReader.Tests.csproj" Id="fba42632-e63f-4cee-944f-bd2debe93e88" />
+  <Project Path="URLReader/URLReader.csproj" />
+</Solution>
