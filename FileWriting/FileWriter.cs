@@ -1,9 +1,5 @@
-﻿namespace PdfUrlExaminer
+﻿namespace FileWriting
 {
-    public interface IFileWriter
-    {
-        Task SaveFile(string brNumber, HttpContent content);
-    }
     public class FileWriter : IFileWriter
     {
         public async Task SaveFile(string brNumber, HttpContent content)
@@ -18,6 +14,20 @@
             await contentStream.CopyToAsync(file); // copy that stream to the file stream
 
             //TODO: Return some indication of success or failure
+        }
+    }
+    public class NetworkFileWriter : IFileWriter
+    {
+        public Task SaveFile(string brNumber, HttpContent content)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class BlobStorageFileWriter : IFileWriter
+    {
+        public Task SaveFile(string brNumber, HttpContent content)
+        {
+            throw new NotImplementedException();
         }
     }
 }
