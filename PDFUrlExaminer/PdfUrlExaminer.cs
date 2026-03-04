@@ -22,16 +22,29 @@ namespace PdfUrlExaminer
         {
             foreach (var urlSet in urlSets)
             {
-                var pdfReadResult = await ReadUrls(urlSet.primaryUrl, urlSet.secondaryUrl);
-                if (pdfReadResult.Success )
-                {
-                    var fileSaved = await SavePdf(urlSet.brNumber, pdfReadResult.PdfContent);
-                    LogReport(urlSet.brNumber, fileSaved);
-                    continue;
-                }
-                LogReport(urlSet.brNumber, false);
+                await BuildExamineUrlTask(urlSet.brNumber, urlSet.primaryUrl, urlSet.secondaryUrl);
             }
+            // var throttler = new SemaphoreSlim(10);
+            // var tasks = urlSets.Select(async urlSet =>
+            // {
+            //     await throttler.WaitAsync();
+            //     try { await BuildExamineUrlTask(urlSet.brNumber, urlSet.primaryUrl, urlSet.secondaryUrl); }
+            //     finally { throttler.Release(); }
+            // });
+            // await Task.WhenAll(tasks);
         }
+        private async Task BuildExamineUrlTask(string brNumber, string primaryUrl, string secondaryUrl)
+        {
+            var pdfReadResult = await ReadUrls(primaryUrl, secondaryUrl);
+            if (pdfReadResult.Success)
+            {
+                var fileSaved = await SavePdf(brNumber, pdfReadResult.PdfContent);
+                LogReport(brNumber, fileSaved);
+                return;
+            }
+            LogReport(brNumber, false);
+        }
+
         private async Task<PdfContentResult> ReadUrls(string primaryUrl, string secondaryUrl)
         {
             //prøv at hente PDF-indholdet fra primaryUrl eller secondaryUrl
@@ -64,7 +77,7 @@ namespace PdfUrlExaminer
         private void LogReport(string brNumber, bool success)
         {
             //Log en rapport om hvilke URL-er som blev forsøgt, og hvilke som fungerede
-            Console.WriteLine($"Report: {brNumber} => {(success ? "JA" : "NEJ" )}");
+            Console.WriteLine($"Report: {brNumber} => {(success ? "JA" : "NEJ")}");
         }
     }
     internal class PdfContentResult
