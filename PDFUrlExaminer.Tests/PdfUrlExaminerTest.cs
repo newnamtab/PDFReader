@@ -1,5 +1,5 @@
-﻿using Moq;
-using PdfUrlExaminer;
+﻿using FileWriting;
+using Moq;
 using URLReader;
 
 namespace PDFUrlExaminer.Tests
@@ -44,7 +44,7 @@ namespace PDFUrlExaminer.Tests
         private Mock<IFileWriter> GivenFileWriter()
         {
             var fileWriterMock = new Mock<IFileWriter>(MockBehavior.Strict);
-            fileWriterMock.Setup(f => f.SaveFile(It.IsAny<string>(), It.IsAny<HttpContent>())).Returns(Task.CompletedTask);
+            fileWriterMock.Setup(f => f.SaveFile(It.IsAny<string>(), It.IsAny<HttpContent>())).ReturnsAsync( FileWriteResult.CreateSuccess() );
             return fileWriterMock;
         }
         private PdfUrlExaminer.PdfUrlExaminer GetSut(Mock<IURLReader> urlReaderMock, Mock<IFileWriter> fileWriterMock) =>

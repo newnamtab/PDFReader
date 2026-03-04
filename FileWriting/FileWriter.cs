@@ -1,31 +1,51 @@
-﻿namespace FileWriting
+﻿using System.Text.RegularExpressions;
+
+namespace FileWriting
 {
     public class FileWriter : IFileWriter
     {
-        public async Task SaveFile(string brNumber, HttpContent content)
+        private readonly string _fileStorageDirectory;// = "FileStorage";
+        private readonly IBRNumberValidation _brNumberValidation;
+
+        public FileWriter(string fileStorageDirectory, IBRNumberValidation brNumberValidation)
         {
-            // create a new file to write to
-            // TODO: consider using a more robust file naming strategy to avoid potential conflicts or invalid characters in brNumber
+            _fileStorageDirectory = fileStorageDirectory;
+            _brNumberValidation = brNumberValidation;
+        }
+
+        public async Task<FileWriteResult> SaveFile(string brNumber, HttpContent content)
+        {
+            
+            if ( _brNumberValidation.IsValid(brNumber) == false) { return FileWriteResult.CreateFailure("Invalid BRNumber"); }
+
+            EnsureDirectoryExists();
+
             // also consider adding error handling for file I/O operations
-            // ensure the directory exists
-            // TODO: Make the base directory configurable rather than hardcoding "FileStorage"
-            using var file = File.Create($"FileStorage/{brNumber}.pdf");
+            // create a new file to write to
+            using var file = File.Create($"{_fileStorageDirectory}/{brNumber}.pdf");
             var contentStream = await content.ReadAsStreamAsync(); // get the actual content stream
             await contentStream.CopyToAsync(file); // copy that stream to the file stream
 
-            //TODO: Return some indication of success or failure
+            return FileWriteResult.CreateSuccess();
+        }
+        private void EnsureDirectoryExists()
+        {
+            if (!Directory.Exists(_fileStorageDirectory))
+            {
+                Directory.CreateDirectory(_fileStorageDirectory);
+            }
         }
     }
     public class NetworkFileWriter : IFileWriter
     {
-        public Task SaveFile(string brNumber, HttpContent content)
+        public Task<FileWriteResult> SaveFile(string brNumber, HttpContent content)
         {
             throw new NotImplementedException();
         }
     }
     public class BlobStorageFileWriter : IFileWriter
     {
-        public Task SaveFile(string brNumber, HttpContent content)
+        public Task<FileWriteResult> SaveFile(string brNumber, HttpContent content)
         {
             throw new NotImplementedException();
         }

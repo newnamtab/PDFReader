@@ -19,6 +19,11 @@ builder.Services.AddScoped<IURLProvider, URLProvider.URLProvider>(sp =>
     return new URLProvider.URLProvider(filePath, brNumberColumnName, primaryColumnName, secondaryColumnName);
 });
 builder.Services.AddScoped<IURLReader, URLReader.URLReader>();
+builder.Services.AddScoped<IBRNumberValidation, BRNumberValidation>(sp =>
+{
+    var brNumberRegex = builder.Configuration.GetValue<string>("PDFReader:BRNumberRegex") ?? "";
+    return new BRNumberValidation(brNumberRegex);
+});
 builder.Services.AddScoped<IFileWriter, FileWriter>();
 builder.Services.AddScoped<IPdfUrlExaminer, PdfUrlExaminer.PdfUrlExaminer>();
 

@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="FileWriting.Tests/FileWriting.Tests.csproj" Id="3cbc8171-c7e2-4ee7-a76a-33909660a849" />
   <Project Path="FileWriting/FileWriting.csproj" Id="935a52bb-e31b-4794-9970-77e5b0b9428e" />
   <Project Path="PDFReader/PDFReader.csproj" />
   <Project Path="PDFUrlExaminer.Tests/PDFUrlExaminer.Tests.csproj" Id="95623e87-3de7-4cff-885a-add206b42686" />
