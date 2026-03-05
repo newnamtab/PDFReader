@@ -54,7 +54,8 @@ namespace URLProvider
                     {
                         yield break;
                     }
-
+                    //TODO: Figure out how not include empty rows in the excel sheet.
+                    //      Currently, if there are empty rows, it will return empty strings for those rows.
                     for (int i = 0; i < firstTable.Rows.Count; i++)
                     {
                         var brNumberRow = firstTable.Rows[i][BRnumberColumnIndex].ToString();
