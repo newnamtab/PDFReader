@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Moq;
+﻿using Moq;
 using Moq.Protected;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
 

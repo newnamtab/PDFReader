@@ -1,4 +1,5 @@
 ﻿using ExcelDataReader;
+using Microsoft.Extensions.Options;
 
 namespace URLProvider
 {
@@ -13,12 +14,12 @@ namespace URLProvider
         private readonly string _primaryColumnName;
         private readonly string _secondaryColumnName;
 
-        public URLProvider(string filePath, string brNumberColumnName, string primaryColumnName, string secondaryColumnName)
+        public URLProvider(IOptions<URLProviderSettings> urlProviderOptions)
         {
-            _filePath = filePath;
-            _brNumberColumnName = brNumberColumnName;
-            _primaryColumnName = primaryColumnName;
-            _secondaryColumnName = secondaryColumnName;
+            _filePath = urlProviderOptions.Value.FilePath;
+            _brNumberColumnName = urlProviderOptions.Value.BRNumberColumnName;
+            _primaryColumnName = urlProviderOptions.Value.PrimaryColumnName;
+            _secondaryColumnName = urlProviderOptions.Value.SecondaryColumnName;
         }
         public IEnumerable<ProvidedUrls> GetURLs()
         {

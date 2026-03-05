@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Microsoft.Extensions.Options;
+using Moq;
 
 namespace FileWriting.Tests
 {
@@ -26,7 +27,10 @@ namespace FileWriting.Tests
             var mockBrNumberValidation = new Mock<IBRNumberValidation>();
             mockBrNumberValidation.Setup(x => x.IsValid(It.IsAny<string>())).Returns(true);
             
-            return new FileWriter("TestData", mockBrNumberValidation.Object);
+            return new FileWriter(Options.Create(new FileWriterSettings
+            {
+                FileStorageDirectory = "TestData"
+            }), mockBrNumberValidation.Object);
         }
     }
 }

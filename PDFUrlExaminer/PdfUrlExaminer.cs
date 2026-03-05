@@ -1,4 +1,5 @@
 ﻿using FileWriting;
+using Microsoft.Extensions.Logging;
 using URLReader;
 
 namespace PdfUrlExaminer
@@ -12,11 +13,13 @@ namespace PdfUrlExaminer
     {
         private readonly IURLReader _pdfUrlReader;
         private readonly IFileWriter _fileWriter;
+        private readonly ILogger<PdfUrlExaminer> _logger;
 
-        public PdfUrlExaminer(IURLReader pdfUrlReader, IFileWriter fileWriter)
+        public PdfUrlExaminer(IURLReader pdfUrlReader, IFileWriter fileWriter, ILogger<PdfUrlExaminer> logger)
         {
             _pdfUrlReader = pdfUrlReader;
             _fileWriter = fileWriter;
+            _logger = logger;
         }
         public async Task ExamineUrls(IEnumerable<(string brNumber, string primaryUrl, string secondaryUrl)> urlSets)
         {
@@ -77,7 +80,7 @@ namespace PdfUrlExaminer
         private void LogReport(string brNumber, bool success)
         {
             //Log en rapport om hvilke URL-er som blev forsøgt, og hvilke som fungerede
-            Console.WriteLine($"Report: {brNumber} => {(success ? "JA" : "NEJ")}");
+            _logger.LogInformation("Report: {BRNumber} => {Result}", brNumber, success ? "JA" : "NEJ");
         }
     }
     internal class PdfContentResult

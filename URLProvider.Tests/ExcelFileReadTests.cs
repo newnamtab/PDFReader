@@ -1,4 +1,7 @@
-﻿namespace URLProvider.Tests
+﻿using Microsoft.Extensions.Options;
+using Moq;
+
+namespace URLProvider.Tests
 {
     public class ExcelFileReadTests
     {
@@ -22,7 +25,17 @@
         }
         private URLProvider GetSut()
         {
-            return new URLProvider("TestData/ValidExcelFile.xlsx","BRNumberColumn", "PrimaryColumn", "SecondaryColumn");
+            var settingsMock = new Mock<IOptions<URLProviderSettings>>();
+            settingsMock.Setup(s => s.Value).Returns(
+                new URLProviderSettings {
+                    FilePath = "TestData/ValidExcelFile.xlsx",
+                    BRNumberColumnName = "BRNumberColumn",
+                    PrimaryColumnName = "PrimaryColumn",
+                    SecondaryColumnName = "SecondaryColumn"
+                    }
+                );
+
+            return new URLProvider(settingsMock.Object);
         }
     }
 }

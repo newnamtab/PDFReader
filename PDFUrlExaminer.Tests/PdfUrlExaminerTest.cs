@@ -1,4 +1,5 @@
 ﻿using FileWriting;
+using Microsoft.Extensions.Logging;
 using Moq;
 using URLReader;
 
@@ -18,8 +19,9 @@ namespace PDFUrlExaminer.Tests
         {
             var urlReaderMock = GivenUrlReader();
             var fileWriterMock = GivenFileWriter();
+            var loggerMock = GivenLogger();
 
-            var sut = GetSut(urlReaderMock, fileWriterMock);
+            var sut = GetSut(urlReaderMock, fileWriterMock, loggerMock);
             var urlSets = new List<(string brNumber, string primaryUrl, string secondaryUrl)>
             {
                 (brNumber, primaryUrl, secondaryUrl)
@@ -29,6 +31,14 @@ namespace PDFUrlExaminer.Tests
 
             urlReaderMock.Verify(r => r.ReadURL(It.IsAny<Uri>()), Times.Exactly(expectedUrlCallTimes));
             fileWriterMock.Verify(f => f.SaveFile(validBRnumber, It.IsAny<HttpContent>()), expectedFileSave ? Times.Once : Times.Never);
+            loggerMock.Verify(logger =>
+                                logger.Log(
+                                    LogLevel.Information,
+                                    It.IsAny<EventId>(),
+                                    It.IsAny<It.IsAnyType>(),
+                                    It.IsAny<Exception>(),
+                                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+                                ), Times.Once );
         }
         private Mock<IURLReader> GivenUrlReader()
         {
@@ -38,16 +48,21 @@ namespace PDFUrlExaminer.Tests
                         ? new PDFContentResult(true, new StringContent("Fake Primary PDF content"))
                         : x.OriginalString.Equals(validSecondaryUrl, StringComparison.OrdinalIgnoreCase)
                          ? new PDFContentResult(true, new StringContent("Fake Secondary PDF content"))
-                            : new PDFContentResult(false, new StringContent("")) );
+                            : new PDFContentResult(false, new StringContent("")));
             return urlReaderMock;
         }
         private Mock<IFileWriter> GivenFileWriter()
         {
             var fileWriterMock = new Mock<IFileWriter>(MockBehavior.Strict);
-            fileWriterMock.Setup(f => f.SaveFile(It.IsAny<string>(), It.IsAny<HttpContent>())).ReturnsAsync( FileWriteResult.CreateSuccess() );
+            fileWriterMock.Setup(f => f.SaveFile(It.IsAny<string>(), It.IsAny<HttpContent>())).ReturnsAsync(FileWriteResult.CreateSuccess());
             return fileWriterMock;
         }
-        private PdfUrlExaminer.PdfUrlExaminer GetSut(Mock<IURLReader> urlReaderMock, Mock<IFileWriter> fileWriterMock) =>
-            new PdfUrlExaminer.PdfUrlExaminer(urlReaderMock.Object, fileWriterMock.Object);
+        private Mock<ILogger> GivenLogger()
+        {
+            var loggerMock = new Mock<ILogger>(MockBehavior.Loose);
+            return loggerMock;
+        }
+        private PdfUrlExaminer.PdfUrlExaminer GetSut(Mock<IURLReader> urlReaderMock, Mock<IFileWriter> fileWriterMock, Mock<ILogger> logger) =>
+            new PdfUrlExaminer.PdfUrlExaminer(urlReaderMock.Object, fileWriterMock.Object, logger.Object);
     }
 }

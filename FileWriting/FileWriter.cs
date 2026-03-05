@@ -1,4 +1,4 @@
-﻿using System.Text.RegularExpressions;
+﻿using Microsoft.Extensions.Options;
 
 namespace FileWriting
 {
@@ -7,9 +7,9 @@ namespace FileWriting
         private readonly string _fileStorageDirectory;// = "FileStorage";
         private readonly IBRNumberValidation _brNumberValidation;
 
-        public FileWriter(string fileStorageDirectory, IBRNumberValidation brNumberValidation)
+        public FileWriter(IOptions<FileWriterSettings> fileStorageOption, IBRNumberValidation brNumberValidation)
         {
-            _fileStorageDirectory = fileStorageDirectory;
+            _fileStorageDirectory = fileStorageOption.Value.FileStorageDirectory;
             _brNumberValidation = brNumberValidation;
         }
 
